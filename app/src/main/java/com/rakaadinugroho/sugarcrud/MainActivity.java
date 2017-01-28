@@ -1,9 +1,11 @@
 package com.rakaadinugroho.sugarcrud;
 
 import android.content.Intent;
+import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.SearchView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.support.v7.widget.helper.ItemTouchHelper;
 import android.util.Log;
@@ -83,6 +85,15 @@ public class MainActivity extends AppCompatActivity {
                 Toast.makeText(this, "Belum Ada Data", Toast.LENGTH_SHORT).show();
         }
     }
+    private void searchData(String param){
+        List<Notes> notes   = Notes.findWithQuery(Notes.class, "SELECT title FROM Notes WHERE title LIKE ? ", "%"+param+"%");
+        if (notes.size() > 0){
+            Notes note  = notes.get(0);
+            Toast.makeText(this, "Ada Data" + note.getTitle(), Toast.LENGTH_SHORT).show();
+        }else{
+            Toast.makeText(this, "Data Tidak Ditemukan!", Toast.LENGTH_SHORT).show();
+        }
+    }
     private void initViews() {
         notes_recyclerview = (RecyclerView) findViewById(R.id.notes_recyclerview);
         StaggeredGridLayoutManager layoutManager    = new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL);
@@ -95,6 +106,21 @@ public class MainActivity extends AppCompatActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater   = getMenuInflater();
         inflater.inflate(R.menu.option_menu, menu);
+        MenuItem menuItem   = menu.findItem(R.id.search_note);
+        final SearchView searchView = (SearchView) MenuItemCompat.getActionView(menuItem);
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                searchData(query);
+                searchView.clearFocus();
+                return true;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                return false;
+            }
+        });
         return super.onCreateOptionsMenu(menu);
     }
 
