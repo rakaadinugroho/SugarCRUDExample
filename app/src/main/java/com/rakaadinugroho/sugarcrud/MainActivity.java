@@ -86,7 +86,8 @@ public class MainActivity extends AppCompatActivity {
         }
     }
     private void searchData(String param){
-        List<Notes> notes   = Notes.findWithQuery(Notes.class, "SELECT title FROM Notes WHERE title LIKE ? ", "%"+param+"%");
+        List<Notes> notes  = Notes.find(Notes.class, "TITLE LIKE ?", "%"+param+"%");
+        Log.d("Ada Data ", String.valueOf(notes.size()));
         if (notes.size() > 0){
             Notes note  = notes.get(0);
             Toast.makeText(this, "Ada Data" + note.getTitle(), Toast.LENGTH_SHORT).show();
